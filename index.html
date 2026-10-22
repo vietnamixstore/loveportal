@@ -200,7 +200,7 @@
       ==========================
       LOVE PORTAL — CUSTOMIZE ME
       ==========================
-      1) Put your music file in this folder, for example: music.mp3
+      1) Put your music file in this folder, for example: daloyeuemnhieu.mp3
       2) Add photo URLs or file names (photo1.jpg) to each memory's "image".
       3) Edit names, letter, and final message below.
       4) Upload index.html + your media files to GitHub Pages.
@@ -209,7 +209,7 @@
       yourName: "Người thương",
       partnerName: "Cậu",
       intro: "Có những điều không thể gói gọn trong một món quà. Vì vậy, mình tạo ra một thế giới nhỏ — nơi lưu giữ những điều chỉ hai chúng ta hiểu.",
-      musicFile: "music.mp3",
+      musicFile: "daloyeuemnhieu.mp3",
       memories: [
         { icon: "☁️", title: "Ngày mình gặp nhau", text: "Một ngày tưởng như bình thường, lại mở đầu cho rất nhiều điều đặc biệt.", image: "" },
         { icon: "🌷", title: "Khoảnh khắc yêu thích", text: "Không cần điều gì lớn lao, chỉ cần ở cạnh nhau cũng đủ vui rồi.", image: "" },
@@ -254,7 +254,7 @@
       setTimeout(() => toast.classList.remove("show"), 2200);
     }
     async function startMusic() {
-      if (!audio.src || audio.src.endsWith("/")) { showToast("Thêm file music.mp3 để phát nhạc nhé ♫"); return; }
+      if (!audio.src || audio.src.endsWith("/")) { showToast("Thêm file daloyeuemnhieu.mp3 để phát nhạc nhé ♫"); return; }
       try {
         await audio.play(); musicStarted = true; $("musicToggle").classList.add("playing"); $("musicToggle").textContent = "Ⅱ";
       } catch (e) {
@@ -268,7 +268,7 @@
       for (let i=0;i<10;i++) setTimeout(createHeart, i*180);
     });
     $("musicToggle").addEventListener("click", async () => {
-      if (!audio.src) { showToast("Thêm file music.mp3 vào thư mục website nhé"); return; }
+      if (!audio.src) { showToast("Thêm file daloyeuemnhieu.mp3 vào thư mục website nhé"); return; }
       if (audio.paused) await startMusic();
       else { audio.pause(); musicStarted = false; $("musicToggle").classList.remove("playing"); $("musicToggle").textContent = "♫"; }
     });
