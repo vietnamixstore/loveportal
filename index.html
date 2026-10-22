@@ -121,21 +121,41 @@
     @media(prefers-reduced-motion:reduce){.floating-photo{animation:none!important}}
 
 
-    /* Global floating photo layer: stays behind content throughout the entire page */
+    /* Global floating photo layer: ảnh to, nghiêng tự nhiên, đung đưa liên tục */
     .global-photo-layer { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
-    .global-floating-photo { position:absolute; width:clamp(76px,10vw,138px); aspect-ratio:3/4; padding:5px 5px 19px; border-radius:10px; border:1px solid rgba(255,224,240,.42); background:rgba(255,255,255,.10); box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(255,105,179,.10); opacity:.48; pointer-events:auto; cursor:pointer; animation:globalPhotoDrift var(--duration,9s) ease-in-out infinite alternate; animation-delay:var(--delay,0s); will-change:transform; }
-    .global-floating-photo img { width:100%; height:100%; display:block; object-fit:cover; border-radius:6px; }
-    .global-floating-photo .photo-caption { position:absolute; left:5px; right:5px; bottom:3px; text-align:center; color:#fff0f7; font-size:.55rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .global-floating-photo {
+      position:absolute; width:clamp(130px,15vw,220px); aspect-ratio:3/4; margin:0; padding:7px 7px 26px;
+      border-radius:12px; border:1px solid rgba(255,230,242,.75);
+      background:linear-gradient(145deg,rgba(255,255,255,.36),rgba(255,255,255,.16));
+      box-shadow:0 14px 38px rgba(0,0,0,.45),0 0 26px rgba(255,105,179,.22);
+      opacity:.93; pointer-events:auto; cursor:pointer; font:inherit; color:inherit;
+      transform-origin:50% 6%; /* đung đưa như ảnh treo */
+      animation:photoSway var(--duration,5s) ease-in-out infinite alternate;
+      animation-delay:var(--delay,0s); will-change:transform;
+      -webkit-tap-highlight-color:transparent; touch-action:manipulation;
+      transition:opacity .25s, box-shadow .25s;
+    }
+    .global-floating-photo img { width:100%; height:100%; display:block; object-fit:cover; border-radius:7px; background:linear-gradient(135deg,#46244f,#b75e95); pointer-events:none; }
+    .global-floating-photo .photo-caption { position:absolute; left:7px; right:7px; bottom:5px; text-align:center; color:#fff0f7; font-size:.72rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
     .global-floating-photo.no-image img { opacity:0; }
-    .global-floating-photo .photo-fallback { display:none; position:absolute; inset:0 0 13px; place-items:center; font-size:1.8rem; }
+    .global-floating-photo .photo-fallback { display:none; position:absolute; inset:0 0 20px; place-items:center; font-size:2.2rem; }
     .global-floating-photo.no-image .photo-fallback { display:grid; }
-    .global-floating-photo:hover,.global-floating-photo:focus-visible { opacity:.88; z-index:2; outline:1px solid #ffc2df; }
+    .global-floating-photo:hover,.global-floating-photo:focus-visible { opacity:1; z-index:3; box-shadow:0 18px 46px rgba(0,0,0,.55),0 0 34px rgba(255,105,179,.4); outline:none; }
+    @keyframes photoSway {
+      0%   { transform:translate3d(calc(var(--dx,8px) * -1), calc(var(--dy,10px) * -1), 0) rotate(calc(var(--tilt,0deg) - var(--sway,4deg))); }
+      100% { transform:translate3d(var(--dx,8px), var(--dy,10px), 0) rotate(calc(var(--tilt,0deg) + var(--sway,4deg))); }
+    }
     main, footer { position:relative; z-index:1; }
+    /* main không chặn chạm: chạm vào chỗ trống sẽ xuống ảnh, nút và thẻ vẫn bấm được */
+    main { pointer-events:none; }
+    main button, .memory-card, .letter-box, .surprise { pointer-events:auto; }
     .topbar { position:absolute; z-index:5; }
     .hero, .section, .surprise, .letter-box, .memory-card { background-color:transparent; }
-    @keyframes globalPhotoDrift { 0% { transform:translate3d(0,0,0) rotate(var(--tilt,0deg)); } 35% { transform:translate3d(12px,-15px,0) rotate(calc(var(--tilt,0deg) + 3deg)); } 70% { transform:translate3d(-9px,9px,0) rotate(calc(var(--tilt,0deg) - 2deg)); } 100% { transform:translate3d(7px,-5px,0) rotate(calc(var(--tilt,0deg) + 1deg)); } }
-    @media(max-width:700px) { .global-floating-photo { width:clamp(58px,17vw,92px); padding:4px 4px 15px; opacity:.35; } .global-floating-photo .photo-caption { font-size:.45rem; } }
-    @media(prefers-reduced-motion:reduce) { .global-floating-photo { animation:none!important; } }
+    @media(max-width:700px) {
+      .global-floating-photo { width:clamp(96px,30vw,150px); padding:5px 5px 20px; border-radius:10px; opacity:.9; }
+      .global-floating-photo .photo-caption { font-size:.56rem; left:5px; right:5px; bottom:3px; }
+    }
+    @media(prefers-reduced-motion:reduce) { .global-floating-photo { animation:none!important; transform:rotate(var(--tilt,0deg)); } }
 
     .letter-box {
       max-width:720px; margin:0 auto; padding:clamp(24px, 6vw, 54px); border:1px solid rgba(255,167,211,.23);
@@ -169,6 +189,11 @@
       .section {padding:62px 0}.hero {padding-top:105px}
     }
     @media (prefers-reduced-motion: reduce) { *,*::before,*::after {animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important} }
+    /* Giúp chữ vẫn rõ khi ảnh to nằm phía sau */
+    .hero, .section-head { text-shadow:0 2px 16px rgba(16,8,23,.95), 0 0 5px rgba(16,8,23,.7); }
+    .primary-btn, .ghost-btn { text-shadow:none; }
+    .letter-box, .surprise { background:linear-gradient(135deg,rgba(26,11,36,.8),rgba(52,22,64,.74)); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+    .memory-card { -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
   </style>
 </head>
 <body>
@@ -289,37 +314,61 @@
 
 
     const globalPhotoLayer = $("globalPhotoLayer");
-    // Phân bố ảnh trên toàn màn hình; mỗi lần tải trang sẽ có vị trí ngẫu nhiên khác nhau.
-    const occupied = [];
-    function randomPosition(index) {
-      const mobile = window.matchMedia("(max-width: 700px)").matches;
-      const width = mobile ? 17 : 11;
-      const height = mobile ? 25 : 34;
-      let x = 0, y = 0, attempts = 0;
-      do {
-        x = 2 + Math.random() * Math.max(5, 96 - width);
-        y = 3 + Math.random() * Math.max(5, 92 - height);
-        attempts++;
-      } while (attempts < 35 && occupied.some(p => Math.abs(p.x-x) < width*.72 && Math.abs(p.y-y) < height*.72));
-      occupied.push({x,y});
-      return {x,y};
+    const photoCards = [];
+    const rand = (min, max) => min + Math.random() * (max - min);
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+      return arr;
     }
-    CONFIG.floatingImages.forEach((photo,index)=>{
-      const card=document.createElement("button");
-      card.type="button"; card.className="global-floating-photo";
-      card.setAttribute("aria-label",`Xem ảnh: ${photo.caption||"Kỷ niệm"}`);
-      const pos=randomPosition(index);
-      card.style.left=pos.x+"%"; card.style.top=pos.y+"%";
-      card.style.setProperty("--tilt",(Math.random()*18-9).toFixed(1)+"deg");
-      card.style.setProperty("--duration",(7+Math.random()*9).toFixed(1)+"s");
-      card.style.setProperty("--delay",(-Math.random()*12).toFixed(1)+"s");
-      const img=document.createElement("img"); img.src=photo.src; img.alt=photo.caption||"Ảnh kỷ niệm"; img.loading="lazy";
-      img.onerror=()=>card.classList.add("no-image");
-      const fallback=document.createElement("span"); fallback.className="photo-fallback"; fallback.textContent=["♡","✦","🌷","☁️"][index%4];
-      const caption=document.createElement("span"); caption.className="photo-caption"; caption.textContent=photo.caption||`Kỷ niệm ${index+1}`;
-      card.append(img,fallback,caption);
-      card.addEventListener("click",()=>{if(!img.complete||!img.naturalWidth){showToast("Kiểm tra tên ảnh trong CONFIG.floatingImages nhé ♡");return;}$("lightboxImage").src=photo.src;$("photoLightbox").classList.add("open");});
+    // Chia màn hình thành lưới rồi đặt lệch ngẫu nhiên trong từng ô: ảnh trải đều, không dồn cục.
+    function layoutPhotos() {
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const cols = vw <= 700 ? 3 : 4;
+      const rows = Math.ceil(photoCards.length / cols);
+      const cellW = vw / cols, cellH = vh / rows;
+      const cells = shuffle(photoCards.map((_, i) => i));
+      photoCards.forEach((card, i) => {
+        const col = cells[i] % cols, row = Math.floor(cells[i] / cols);
+        const pw = card.offsetWidth, ph = card.offsetHeight;
+        let x = col * cellW + Math.random() * Math.max(0, cellW - pw);
+        let y = row * cellH + Math.random() * Math.max(0, cellH - ph);
+        x = Math.min(Math.max(0, x), Math.max(0, vw - pw));
+        y = Math.min(Math.max(0, y), Math.max(0, vh - ph));
+        card.style.left = x + "px"; card.style.top = y + "px";
+      });
+    }
+    CONFIG.floatingImages.forEach((photo, index) => {
+      const mobile = window.innerWidth <= 700;
+      const card = document.createElement("button");
+      card.type = "button"; card.className = "global-floating-photo";
+      card.setAttribute("aria-label", `Xem ảnh: ${photo.caption || "Kỷ niệm"}`);
+      const tilt = (Math.random() < .5 ? -1 : 1) * rand(3, 13);   // nghiêng trái/phải ngẫu nhiên
+      card.style.setProperty("--tilt", tilt.toFixed(1) + "deg");
+      card.style.setProperty("--sway", rand(mobile ? 2 : 2.5, mobile ? 4 : 5.5).toFixed(1) + "deg"); // biên độ đung đưa
+      card.style.setProperty("--dx", rand(4, mobile ? 9 : 14).toFixed(0) + "px");
+      card.style.setProperty("--dy", rand(6, mobile ? 12 : 18).toFixed(0) + "px");
+      card.style.setProperty("--duration", rand(3.5, 6.5).toFixed(1) + "s");
+      card.style.setProperty("--delay", (-rand(0, 8)).toFixed(1) + "s");
+      const img = document.createElement("img"); img.src = photo.src; img.alt = photo.caption || "Ảnh kỷ niệm"; img.decoding = "async";
+      img.onerror = () => card.classList.add("no-image");
+      const fallback = document.createElement("span"); fallback.className = "photo-fallback"; fallback.textContent = ["♡","✦","🌷","☁️"][index % 4];
+      const caption = document.createElement("span"); caption.className = "photo-caption"; caption.textContent = photo.caption || `Kỷ niệm ${index + 1}`;
+      card.append(img, fallback, caption);
+      card.addEventListener("click", () => {
+        if (!img.complete || !img.naturalWidth) { showToast("Kiểm tra tên ảnh trong CONFIG.floatingImages nhé ♡"); return; }
+        $("lightboxImage").src = photo.src; $("photoLightbox").classList.add("open");
+      });
       globalPhotoLayer.appendChild(card);
+      photoCards.push(card);
+    });
+    layoutPhotos();
+    // Chỉ sắp xếp lại khi chiều rộng đổi (xoay ngang/dọc), tránh giật khi thanh địa chỉ điện thoại co giãn.
+    let lastW = window.innerWidth, resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (Math.abs(window.innerWidth - lastW) > 40) { lastW = window.innerWidth; layoutPhotos(); }
+      }, 250);
     });
 
     function closeLightbox(){$("photoLightbox").classList.remove("open");$("lightboxImage").src="";}
