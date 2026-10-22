@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#170b20" />
+  <meta name="description" content="Một cánh cổng nhỏ dẫn đến câu chuyện chỉ dành cho hai người." />
+  <title>Love Portal — Thế giới của chúng ta</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+    :root {
+      --bg: #100817;
+      --pink: #ff6fae;
+      --pink-light: #ffc1dc;
+      --lavender: #bca3ff;
+      --cream: #fff4f8;
+      --muted: #d7bfd3;
+      --glass: rgba(255,255,255,.075);
+      --line: rgba(255,255,255,.14);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--cream);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(126, 49, 107, .36), transparent 48%),
+        radial-gradient(ellipse at 10% 80%, rgba(89, 49, 136, .18), transparent 42%),
+        var(--bg);
+      font-family: 'DM Sans', sans-serif; overflow-x: hidden;
+    }
+    body::before {
+      content:""; position:fixed; inset:0; pointer-events:none; z-index:-1; opacity:.42;
+      background-image: radial-gradient(2px 2px at 20px 30px, #fff 45%, transparent 55%),
+        radial-gradient(1px 1px at 90px 80px, #ffc5df 45%, transparent 55%),
+        radial-gradient(1.5px 1.5px at 160px 140px, #fff 45%, transparent 55%),
+        radial-gradient(1px 1px at 220px 45px, #cdbbff 45%, transparent 55%);
+      background-size: 260px 190px;
+      animation: twinkle 7s ease-in-out infinite alternate;
+    }
+    @keyframes twinkle { from { opacity:.22; } to { opacity:.58; } }
+    .topbar {
+      position:absolute; top:0; left:0; right:0; z-index:5; padding:22px clamp(18px, 5vw, 64px);
+      display:flex; justify-content:space-between; align-items:center; gap:12px;
+      color:#f8dce9; font-size:.78rem; letter-spacing:.16em; text-transform:uppercase;
+    }
+    .brand { display:flex; align-items:center; gap:10px; font-weight:700; }
+    .brand-mark { width:27px; height:27px; display:grid; place-items:center; border:1px solid #ff9ec8; border-radius:50%; color:#ff9ec8; }
+    .top-note { color:#bfa8c2; letter-spacing:.08em; text-align:right; }
+    .hero {
+      min-height:100svh; padding:115px 20px 70px; display:flex; flex-direction:column; justify-content:center;
+      align-items:center; text-align:center; position:relative; isolation:isolate;
+    }
+    .eyebrow { color:var(--pink-light); letter-spacing:.26em; text-transform:uppercase; font-size:.7rem; font-weight:700; }
+    h1, h2, h3 { font-family:'Playfair Display', Georgia, serif; font-weight:500; }
+    h1 { font-size:clamp(3.4rem, 11vw, 7.5rem); line-height:.95; letter-spacing:-.055em; margin:22px 0 18px; }
+    h1 span { color:var(--pink-light); font-style:italic; }
+    .hero-copy { max-width:520px; color:#d9c3d7; line-height:1.8; font-size:clamp(.95rem, 2.2vw, 1.08rem); margin:0 auto 28px; }
+    .portal-wrap { width:min(76vw, 340px); aspect-ratio:1; margin:10px auto 30px; position:relative; display:grid; place-items:center; }
+    .portal-ring {
+      position:absolute; inset:7%; border-radius:50%; border:1px solid rgba(255,164,210,.7);
+      box-shadow:0 0 28px rgba(255,91,168,.16), inset 0 0 28px rgba(255,91,168,.1);
+      animation: rotate 22s linear infinite;
+    }
+    .portal-ring::before, .portal-ring::after { content:""; position:absolute; border-radius:50%; border:1px solid rgba(203,171,255,.52); inset:10%; }
+    .portal-ring::after { inset:20%; border-color:rgba(255,210,230,.25); }
+    @keyframes rotate { to { transform:rotate(360deg); } }
+    .portal-core {
+      width:58%; aspect-ratio:1; border-radius:50%; position:relative; overflow:hidden;
+      background:radial-gradient(circle at 50% 35%, #ffc0df 0%, #e96cae 13%, #7c397e 40%, #25112f 68%, #100817 100%);
+      box-shadow:0 0 60px rgba(255,91,168,.35), 0 0 120px rgba(159,99,225,.17);
+      animation: breathe 4s ease-in-out infinite;
+    }
+    .portal-core::before { content:""; position:absolute; inset:-20%; border-radius:50%; border:2px solid rgba(255,233,246,.55); filter:blur(1px); animation:rotate 8s linear infinite reverse; }
+    .portal-core::after { content:"♡"; position:absolute; inset:0; display:grid; place-items:center; font-size:clamp(3rem, 11vw, 5rem); color:#fff0f7; text-shadow:0 0 25px #ff8fca; }
+    @keyframes breathe { 0%,100% { transform:scale(.97); } 50% { transform:scale(1.04); } }
+    .orbit-dot { position:absolute; width:9px; height:9px; border-radius:50%; background:#ffe4f1; box-shadow:0 0 16px #ff83bd; }
+    .orbit-dot.one { top:12%; left:22%; } .orbit-dot.two { right:12%; top:52%; width:6px;height:6px; } .orbit-dot.three { bottom:15%; left:20%; width:5px;height:5px; }
+    .primary-btn, .ghost-btn {
+      border:0; border-radius:999px; padding:15px 25px; font:600 .9rem 'DM Sans',sans-serif; cursor:pointer;
+      transition:transform .2s, box-shadow .2s, background .2s; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    }
+    .primary-btn { color:#351329; background:linear-gradient(110deg,#ffd1e5,#ff86bc); box-shadow:0 8px 30px rgba(255,100,174,.22); }
+    .primary-btn:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(255,100,174,.35); }
+    .ghost-btn { background:transparent; border:1px solid var(--line); color:#ffe9f3; }
+    .ghost-btn:hover { background:rgba(255,255,255,.08); }
+    .tiny-note { margin-top:15px; color:#9f849f; font-size:.74rem; }
+    .section { width:min(100% - 36px, 1000px); margin:0 auto; padding:85px 0; }
+    .section-head { text-align:center; margin-bottom:35px; }
+    .section h2 { font-size:clamp(2.3rem, 6vw, 4rem); margin:12px 0; letter-spacing:-.035em; }
+    .section-sub { color:#c6aec6; line-height:1.8; max-width:560px; margin:0 auto; }
+    .memory-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .memory-card {
+      min-height:240px; border:1px solid var(--line); border-radius:20px; overflow:hidden; position:relative;
+      background:linear-gradient(145deg,rgba(255,182,216,.16),rgba(125,78,158,.08));
+      display:flex; flex-direction:column; justify-content:flex-end; padding:18px;
+      transition:transform .25s, border-color .25s;
+    }
+    .memory-card:hover { transform:translateY(-5px); border-color:rgba(255,155,204,.5); }
+    .memory-card .number { position:absolute; top:16px; left:18px; color:#f5bad9; font-size:.72rem; letter-spacing:.16em; }
+    .memory-art { position:absolute; inset:0; display:grid; place-items:center; font-size:4.4rem; opacity:.9; background:radial-gradient(circle at 50% 42%,rgba(255,167,213,.18),transparent 55%); }
+    .memory-card h3 { position:relative; font-size:1.55rem; margin:0 0 6px; }
+    .memory-card p { position:relative; color:#d6bfd4; margin:0; font-size:.86rem; line-height:1.6; }
+    .letter-box {
+      max-width:720px; margin:0 auto; padding:clamp(24px, 6vw, 54px); border:1px solid rgba(255,167,211,.23);
+      border-radius:26px; background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(139,83,155,.07));
+      box-shadow:0 20px 70px rgba(0,0,0,.12); position:relative;
+    }
+    .letter-box::before { content:"“"; position:absolute; top:5px; left:22px; color:rgba(255,147,197,.3); font:7rem Georgia,serif; }
+    .letter-text { color:#f4dfec; line-height:2; font-family:'Playfair Display',Georgia,serif; font-size:clamp(1.05rem,2.5vw,1.28rem); white-space:pre-line; }
+    .letter-sign { text-align:right; margin-top:24px; color:#ffb7d7; font-family:'Playfair Display',Georgia,serif; font-style:italic; font-size:1.3rem; }
+    .surprise {
+      text-align:center; padding:50px 20px; border:1px solid rgba(255,164,210,.22); border-radius:28px;
+      background:radial-gradient(ellipse at 50% 0%,rgba(255,111,174,.12),transparent 70%),rgba(255,255,255,.025);
+    }
+    .surprise-heart { font-size:3rem; display:block; margin-bottom:12px; filter:drop-shadow(0 0 18px rgba(255,102,172,.4)); }
+    .surprise h2 { font-size:clamp(2rem,6vw,3.4rem); }
+    .surprise-message { max-width:590px; margin:0 auto 25px; color:#d8c1d5; line-height:1.8; }
+    .hidden-message { display:none; margin:25px auto 0; max-width:600px; font-family:'Playfair Display',Georgia,serif; font-size:clamp(1.35rem,4vw,2.2rem); line-height:1.5; color:#ffd0e5; animation:fadeIn .8s ease both; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(12px)} to {opacity:1;transform:translateY(0)} }
+    footer { text-align:center; padding:45px 20px 32px; color:#9f859f; font-size:.76rem; line-height:1.8; }
+    footer .heart { color:#ff8dbf; }
+    .floating-heart { position:fixed; bottom:-30px; z-index:20; pointer-events:none; animation:floatUp 4.5s ease-in forwards; color:#ff90c4; text-shadow:0 0 12px rgba(255,100,174,.6); }
+    @keyframes floatUp { 0% { transform:translateY(0) scale(.7) rotate(0); opacity:0; } 12% {opacity:.9} 100% {transform:translateY(-110vh) scale(1.4) rotate(35deg); opacity:0;} }
+    .music-toggle { position:fixed; right:17px; bottom:17px; z-index:10; width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:rgba(31,15,39,.8);backdrop-filter:blur(10px);color:#ffd5e7;cursor:pointer;font-size:1.05rem; }
+    .music-toggle.playing { box-shadow:0 0 0 5px rgba(255,126,185,.09); animation:musicPulse 1.5s infinite; }
+    @keyframes musicPulse { 50% {box-shadow:0 0 0 9px rgba(255,126,185,.02)} }
+    .toast { position:fixed; bottom:76px; left:50%; transform:translateX(-50%); background:#29132f; border:1px solid var(--line); border-radius:12px; padding:10px 15px; color:#f8dceb; font-size:.8rem; opacity:0; pointer-events:none; transition:opacity .3s; z-index:30; white-space:nowrap; }
+    .toast.show {opacity:1}
+    @media (max-width:700px) {
+      .topbar {padding:18px 18px}.top-note {max-width:135px; line-height:1.5}
+      .memory-grid {grid-template-columns:1fr; gap:12px}.memory-card {min-height:190px}
+      .section {padding:62px 0}.hero {padding-top:105px}
+    }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after {animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important} }
+  </style>
+</head>
+<body>
+  <!-- PERSONALIZATION: edit the names, letter, memories and final message in the CONFIG object near the bottom. -->
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">♡</span> LOVE PORTAL</div>
+    <div class="top-note">Một thế giới nhỏ<br>chỉ dành cho hai người</div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="eyebrow">A little universe for us</div>
+      <h1>Welcome to<br><span>our universe.</span></h1>
+      <p class="hero-copy" id="introCopy">Có những điều không thể gói gọn trong một món quà. Vì vậy, anh/em tạo ra một thế giới nhỏ — nơi lưu giữ những điều chỉ hai chúng ta hiểu.</p>
+      <div class="portal-wrap" aria-hidden="true">
+        <div class="portal-ring"></div><div class="portal-core"></div>
+        <i class="orbit-dot one"></i><i class="orbit-dot two"></i><i class="orbit-dot three"></i>
+      </div>
+      <button class="primary-btn" id="enterBtn">Mở cánh cổng của chúng ta <span>↗</span></button>
+      <div class="tiny-note">Đeo tai nghe nhé — có một điều dành riêng cho bạn.</div>
+    </section>
+
+    <section class="section" id="memories">
+      <div class="section-head">
+        <div class="eyebrow">Chapter 01 · Little moments</div>
+        <h2>Những điều nhỏ bé,<br><em>nhưng là cả thế giới.</em></h2>
+        <p class="section-sub">Một vài khoảnh khắc bình thường đã trở thành những kỷ niệm đặc biệt nhất của chúng ta.</p>
+      </div>
+      <div class="memory-grid" id="memoryGrid"></div>
+    </section>
+
+    <section class="section" id="letter">
+      <div class="section-head">
+        <div class="eyebrow">Chapter 02 · From my heart</div>
+        <h2>Một lá thư<br><em>chưa từng nói hết.</em></h2>
+        <p class="section-sub">Có thể ngoài đời mình không giỏi nói những lời thật ngọt ngào. Vậy nên, hãy để những dòng chữ này nói thay.</p>
+      </div>
+      <article class="letter-box">
+        <div class="letter-text" id="letterText"></div>
+        <div class="letter-sign" id="letterSign">— Người thương của bạn ♡</div>
+      </article>
+    </section>
+
+    <section class="section" id="surprise">
+      <div class="surprise">
+        <span class="surprise-heart">♡</span>
+        <div class="eyebrow">Final chapter · One last thing</div>
+        <h2>Khoan rời đi nhé...</h2>
+        <p class="surprise-message">Cánh cổng sắp khép lại rồi, nhưng vẫn còn một bí mật nhỏ đang chờ bạn mở ra.</p>
+        <button class="primary-btn" id="surpriseBtn">Mở món quà cuối cùng ✨</button>
+        <div class="hidden-message" id="finalMessage"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Được tạo bằng thật nhiều yêu thương <span class="heart">♥</span><br>
+    <span id="footerLine">Một chiếc áo. Một cánh cổng. Một câu chuyện của riêng chúng ta.</span>
+  </footer>
+  <button class="music-toggle" id="musicToggle" aria-label="Bật hoặc tắt nhạc" title="Bật/tắt nhạc">♫</button>
+  <div class="toast" id="toast">Đã mở cánh cổng ♡</div>
+  <audio id="bgMusic" loop preload="none"></audio>
+
+  <script>
+    /*
+      ==========================
+      LOVE PORTAL — CUSTOMIZE ME
+      ==========================
+      1) Put your music file in this folder, for example: music.mp3
+      2) Add photo URLs or file names (photo1.jpg) to each memory's "image".
+      3) Edit names, letter, and final message below.
+      4) Upload index.html + your media files to GitHub Pages.
+    */
+    const CONFIG = {
+      yourName: "Người thương",
+      partnerName: "Cậu",
+      intro: "Có những điều không thể gói gọn trong một món quà. Vì vậy, mình tạo ra một thế giới nhỏ — nơi lưu giữ những điều chỉ hai chúng ta hiểu.",
+      musicFile: "music.mp3",
+      memories: [
+        { icon: "☁️", title: "Ngày mình gặp nhau", text: "Một ngày tưởng như bình thường, lại mở đầu cho rất nhiều điều đặc biệt.", image: "" },
+        { icon: "🌷", title: "Khoảnh khắc yêu thích", text: "Không cần điều gì lớn lao, chỉ cần ở cạnh nhau cũng đủ vui rồi.", image: "" },
+        { icon: "🌙", title: "Điều mình luôn nhớ", text: "Những chuyện nhỏ xíu mà chỉ hai chúng ta mới hiểu.", image: "" }
+      ],
+      letter: "Gửi cậu,\n\nMình không biết phải bắt đầu từ đâu, chỉ biết rằng có cậu, những ngày bình thường cũng trở nên đáng nhớ hơn.\n\nCảm ơn cậu vì đã xuất hiện, vì những lần lắng nghe, những nụ cười và cả những khoảnh khắc chẳng cần nói gì mà vẫn thấy vui.\n\nMình không hứa mọi ngày đều hoàn hảo. Nhưng mình mong rằng, giữa rất nhiều điều thay đổi, chúng ta vẫn sẽ chọn đối xử với nhau bằng sự chân thành và dịu dàng.\n\nNếu một ngày cậu quên mất mình đặc biệt thế nào, hãy quay lại đây nhé. Cánh cổng này sẽ luôn nhắc cậu rằng: có một người đã dành thời gian tạo nên cả một thế giới nhỏ chỉ để cậu mỉm cười.",
+      sign: "— " + "Người thương" + " ♡",
+      finalMessage: "Nếu được chọn lại từ đầu, mình vẫn muốn gặp cậu. Và nếu được ước thêm một điều, mình mong chúng ta sẽ còn tạo ra thật nhiều kỷ niệm để một ngày nào đó cùng nhau nhìn lại và mỉm cười. Mình thương cậu. ♡"
+    };
+
+    const $ = (id) => document.getElementById(id);
+    let musicStarted = false;
+    const audio = $("bgMusic");
+
+    $("introCopy").textContent = CONFIG.intro;
+    $("letterText").textContent = CONFIG.letter;
+    $("letterSign").textContent = "— " + CONFIG.yourName + " ♡";
+    $("finalMessage").textContent = CONFIG.finalMessage;
+    $("footerLine").textContent = `${CONFIG.yourName} ♡ ${CONFIG.partnerName} · Một câu chuyện của riêng chúng ta`;
+
+    if (CONFIG.musicFile) audio.src = CONFIG.musicFile;
+
+    const grid = $("memoryGrid");
+    CONFIG.memories.forEach((memory, i) => {
+      const card = document.createElement("article");
+      card.className = "memory-card";
+      if (memory.image) {
+        card.style.backgroundImage = `linear-gradient(0deg, rgba(16,8,23,.96), rgba(16,8,23,.08)), url("${memory.image}")`;
+        card.style.backgroundSize = "cover";
+        card.style.backgroundPosition = "center";
+      }
+      const number = document.createElement("div"); number.className = "number"; number.textContent = `MEMORY 0${i+1}`;
+      const art = document.createElement("div"); art.className = "memory-art"; art.textContent = memory.icon || "♡";
+      if (memory.image) art.style.display = "none";
+      const title = document.createElement("h3"); title.textContent = memory.title;
+      const text = document.createElement("p"); text.textContent = memory.text;
+      card.append(number, art, title, text); grid.appendChild(card);
+    });
+
+    function showToast(message) {
+      const toast = $("toast"); toast.textContent = message; toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+    async function startMusic() {
+      if (!audio.src || audio.src.endsWith("/")) { showToast("Thêm file music.mp3 để phát nhạc nhé ♫"); return; }
+      try {
+        await audio.play(); musicStarted = true; $("musicToggle").classList.add("playing"); $("musicToggle").textContent = "Ⅱ";
+      } catch (e) {
+        showToast("Chạm nút ♫ để bật nhạc nhé");
+      }
+    }
+    $("enterBtn").addEventListener("click", async () => {
+      await startMusic();
+      $("memories").scrollIntoView({behavior:"smooth"});
+      showToast("Cánh cổng đã mở. Chào mừng đến với thế giới của chúng ta ♡");
+      for (let i=0;i<10;i++) setTimeout(createHeart, i*180);
+    });
+    $("musicToggle").addEventListener("click", async () => {
+      if (!audio.src) { showToast("Thêm file music.mp3 vào thư mục website nhé"); return; }
+      if (audio.paused) await startMusic();
+      else { audio.pause(); musicStarted = false; $("musicToggle").classList.remove("playing"); $("musicToggle").textContent = "♫"; }
+    });
+    $("surpriseBtn").addEventListener("click", () => {
+      $("finalMessage").style.display = "block";
+      $("surpriseBtn").textContent = "Món quà đã được mở ♡";
+      $("surpriseBtn").disabled = true; $("surpriseBtn").style.opacity = ".72";
+      for (let i=0;i<24;i++) setTimeout(createHeart, i*100);
+    });
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "floating-heart"; heart.textContent = ["♡","♥","✦","❤"][Math.floor(Math.random()*4)];
+      heart.style.left = Math.random()*100 + "vw";
+      heart.style.fontSize = (14 + Math.random()*22) + "px";
+      heart.style.animationDuration = (3.2 + Math.random()*2.3) + "s";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }
+    // Note: modern browsers block sound autoplay until the visitor interacts with the page.
+    // Starting music on the "Mở cánh cổng" button is the reliable, browser-friendly approach.
+  </script>
+</body>
+</html>
