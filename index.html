@@ -100,6 +100,26 @@
     .memory-art { position:absolute; inset:0; display:grid; place-items:center; font-size:4.4rem; opacity:.9; background:radial-gradient(circle at 50% 42%,rgba(255,167,213,.18),transparent 55%); }
     .memory-card h3 { position:relative; font-size:1.55rem; margin:0 0 6px; }
     .memory-card p { position:relative; color:#d6bfd4; margin:0; font-size:.86rem; line-height:1.6; }
+
+    .floating-section { width:min(100% - 28px, 1100px); margin:0 auto; padding:72px 0 55px; }
+    .floating-section .section-head { margin-bottom:18px; }
+    .floating-stage { position:relative; height:620px; overflow:hidden; border-radius:28px; border:1px solid rgba(255,164,210,.15); background:radial-gradient(ellipse at 50% 50%, rgba(166,92,174,.14), transparent 60%),linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.035)); isolation:isolate; }
+    .floating-stage::before,.floating-stage::after { content:""; position:absolute; width:260px;height:260px;border-radius:50%;filter:blur(75px);opacity:.18;pointer-events:none;z-index:-1; }
+    .floating-stage::before { background:#ff64ae;top:15%;left:30%; }.floating-stage::after { background:#8c6bff;bottom:0;right:10%; }
+    .floating-photo { position:absolute;width:clamp(100px,17vw,178px);aspect-ratio:3/4;padding:7px 7px 22px;border-radius:13px;border:1px solid rgba(255,224,240,.5);background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.07));box-shadow:0 12px 34px rgba(0,0,0,.28),0 0 22px rgba(255,105,179,.11);backdrop-filter:blur(8px);cursor:pointer;overflow:hidden;animation:photoDrift var(--duration,8s) ease-in-out infinite alternate;animation-delay:var(--delay,0s);transform:rotate(var(--tilt,0deg));transition:box-shadow .25s,border-color .25s;z-index:1; }
+    .floating-photo:hover,.floating-photo:focus-visible { z-index:4;border-color:#ffc2df;box-shadow:0 16px 40px rgba(0,0,0,.35),0 0 30px rgba(255,105,179,.28);outline:none; }
+    .floating-photo img { display:block;width:100%;height:100%;object-fit:cover;border-radius:7px;background:linear-gradient(135deg,#46244f,#b75e95); }
+    .floating-photo .photo-caption { position:absolute;left:7px;right:7px;bottom:4px;color:#fff0f7;font-size:.64rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .floating-photo .photo-fallback { display:none;position:absolute;inset:0 0 15px;place-items:center;font-size:2.2rem;background:radial-gradient(circle,rgba(255,171,212,.24),transparent 65%); }
+    .floating-photo.no-image .photo-fallback { display:grid; }.floating-photo.no-image img { opacity:0; }
+    @keyframes photoDrift { 0%{transform:translate3d(0,8px,0) rotate(var(--tilt,0deg))}50%{transform:translate3d(10px,-15px,0) rotate(calc(var(--tilt,0deg) + 2deg))}100%{transform:translate3d(-8px,4px,0) rotate(calc(var(--tilt,0deg) - 2deg))} }
+    .gallery-hint { color:#a98da9;text-align:center;font-size:.78rem;margin:14px 0 0; }
+    .photo-lightbox { position:fixed;inset:0;z-index:50;display:none;place-items:center;padding:22px;background:rgba(8,3,13,.88);backdrop-filter:blur(12px); }
+    .photo-lightbox.open { display:grid; }.photo-lightbox img { max-width:min(92vw,760px);max-height:82svh;object-fit:contain;border-radius:14px;box-shadow:0 0 50px rgba(255,105,179,.18); }
+    .photo-lightbox button { position:absolute;top:18px;right:18px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:#25122d;color:#fff;font-size:1.5rem;cursor:pointer; }
+    @media(max-width:700px){.floating-section{padding:48px 0 35px}.floating-stage{height:650px}.floating-photo{width:clamp(90px,29vw,135px);padding:5px 5px 19px;border-radius:10px}.floating-photo .photo-caption{left:5px;right:5px;font-size:.58rem}}
+    @media(prefers-reduced-motion:reduce){.floating-photo{animation:none!important}}
+
     .letter-box {
       max-width:720px; margin:0 auto; padding:clamp(24px, 6vw, 54px); border:1px solid rgba(255,167,211,.23);
       border-radius:26px; background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(139,83,155,.07));
@@ -154,6 +174,12 @@
       <div class="tiny-note">Đeo tai nghe nhé — có một điều dành riêng cho bạn.</div>
     </section>
 
+    <section class="floating-section" id="floatingMemories">
+      <div class="section-head"><div class="eyebrow">A sky full of memories</div><h2>Kỷ niệm của chúng ta<br><em>đang bay giữa ngân hà.</em></h2><p class="section-sub">Chạm vào một bức ảnh để ngắm nhìn khoảnh khắc ấy thật gần.</p></div>
+      <div class="floating-stage" id="floatingStage" aria-label="Những bức ảnh kỷ niệm bay lơ lửng"></div>
+      <p class="gallery-hint">♡ Mỗi bức ảnh là một mảnh nhỏ trong thế giới của chúng ta ♡</p>
+    </section>
+
     <section class="section" id="memories">
       <div class="section-head">
         <div class="eyebrow">Chapter 01 · Little moments</div>
@@ -193,6 +219,7 @@
   </footer>
   <button class="music-toggle" id="musicToggle" aria-label="Bật hoặc tắt nhạc" title="Bật/tắt nhạc">♫</button>
   <div class="toast" id="toast">Đã mở cánh cổng ♡</div>
+  <div class="photo-lightbox" id="photoLightbox" role="dialog" aria-modal="true" aria-label="Xem ảnh lớn"><button id="closeLightbox" aria-label="Đóng ảnh">×</button><img id="lightboxImage" alt="Ảnh kỷ niệm phóng to"></div>
   <audio id="bgMusic" loop preload="none"></audio>
 
   <script>
@@ -201,7 +228,7 @@
       LOVE PORTAL — CUSTOMIZE ME
       ==========================
       1) Put your music file in this folder, for example: daloyeuemnhieu.mp3
-      2) Add photo URLs or file names (photo1.jpg) to each memory's "image".
+      2) Add photo URLs or file names (picloveportal1.jpg) to each memory's "image".
       3) Edit names, letter, and final message below.
       4) Upload index.html + your media files to GitHub Pages.
     */
@@ -210,6 +237,21 @@
       partnerName: "Cậu",
       intro: "Có những điều không thể gói gọn trong một món quà. Vì vậy, mình tạo ra một thế giới nhỏ — nơi lưu giữ những điều chỉ hai chúng ta hiểu.",
       musicFile: "daloyeuemnhieu.mp3",
+      // Thêm ảnh cạnh index.html, rồi ghi tên file vào danh sách này.
+      floatingImages: [
+        { src: "picloveportal1.jpg", caption: "Khoảnh khắc của chúng ta" },
+        { src: "picloveportal2.jpg", caption: "Một ngày thật đẹp" },
+        { src: "picloveportal3.jpg", caption: "Chỉ cần có nhau" },
+        { src: "picloveportal4.jpg", caption: "Kỷ niệm đáng nhớ" },
+        { src: "picloveportal5.jpg", caption: "Nụ cười của cậu" },
+        { src: "picloveportal6.jpg", caption: "Ngày mình bên nhau" },
+        { src: "picloveportal7.jpg", caption: "Điều nhỏ bé" },
+        { src: "picloveportal8.jpg", caption: "Mãi là kỷ niệm" },
+        { src: "picloveportal9.jpg", caption: "Thế giới của chúng ta" },
+        { src: "picloveportal10.jpg", caption: "Một chút yêu thương" },
+        { src: "picloveportal11.jpg", caption: "Bức ảnh yêu thích" },
+        { src: "picloveportal12.jpg", caption: "Còn nhiều điều phía trước" }
+      ],
       memories: [
         { icon: "☁️", title: "Ngày mình gặp nhau", text: "Một ngày tưởng như bình thường, lại mở đầu cho rất nhiều điều đặc biệt.", image: "" },
         { icon: "🌷", title: "Khoảnh khắc yêu thích", text: "Không cần điều gì lớn lao, chỉ cần ở cạnh nhau cũng đủ vui rồi.", image: "" },
@@ -231,6 +273,21 @@
     $("footerLine").textContent = `${CONFIG.yourName} ♡ ${CONFIG.partnerName} · Một câu chuyện của riêng chúng ta`;
 
     if (CONFIG.musicFile) audio.src = CONFIG.musicFile;
+
+
+    const floatingStage = $("floatingStage");
+    const photoPositions = [[4,8,-8],[27,5,7],[53,10,-5],[76,7,8],[13,37,6],[39,34,-7],[66,38,5],[83,42,-8],[3,68,7],[28,70,-5],[55,67,8],[73,72,-6],[45,80,4],[17,18,5],[61,16,-7],[36,53,6],[88,14,-4],[7,49,-6],[48,8,7],[64,75,-5]];
+    CONFIG.floatingImages.forEach((photo,index)=>{
+      const card=document.createElement("button");card.type="button";card.className="floating-photo";card.setAttribute("aria-label",`Xem ảnh: ${photo.caption||"Kỷ niệm"}`);
+      const pos=photoPositions[index%photoPositions.length],cycle=Math.floor(index/photoPositions.length);
+      card.style.left=((pos[0]+cycle*7)%84)+"%";card.style.top=((pos[1]+cycle*13)%78)+"%";card.style.setProperty("--tilt",pos[2]+"deg");card.style.setProperty("--duration",(6+(index%6)*.7)+"s");card.style.setProperty("--delay",(-index*.43)+"s");
+      const img=document.createElement("img");img.src=photo.src;img.alt=photo.caption||"Ảnh kỷ niệm";img.loading="lazy";img.onerror=()=>card.classList.add("no-image");
+      const fallback=document.createElement("span");fallback.className="photo-fallback";fallback.textContent=["♡","✦","🌷","☁️"][index%4];
+      const caption=document.createElement("span");caption.className="photo-caption";caption.textContent=photo.caption||`Kỷ niệm ${index+1}`;card.append(img,fallback,caption);
+      card.addEventListener("click",()=>{if(!img.complete||!img.naturalWidth){showToast("Thêm ảnh vào thư mục website để xem nhé ♡");return;}$("lightboxImage").src=photo.src;$("photoLightbox").classList.add("open");});floatingStage.appendChild(card);
+    });
+    function closeLightbox(){$("photoLightbox").classList.remove("open");$("lightboxImage").src="";}
+    $("closeLightbox").addEventListener("click",closeLightbox);$("photoLightbox").addEventListener("click",event=>{if(event.target===$("photoLightbox"))closeLightbox();});document.addEventListener("keydown",event=>{if(event.key==="Escape")closeLightbox();});
 
     const grid = $("memoryGrid");
     CONFIG.memories.forEach((memory, i) => {
