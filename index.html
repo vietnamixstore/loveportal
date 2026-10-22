@@ -120,6 +120,23 @@
     @media(max-width:700px){.floating-section{padding:48px 0 35px}.floating-stage{height:650px}.floating-photo{width:clamp(90px,29vw,135px);padding:5px 5px 19px;border-radius:10px}.floating-photo .photo-caption{left:5px;right:5px;font-size:.58rem}}
     @media(prefers-reduced-motion:reduce){.floating-photo{animation:none!important}}
 
+
+    /* Global floating photo layer: stays behind content throughout the entire page */
+    .global-photo-layer { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+    .global-floating-photo { position:absolute; width:clamp(76px,10vw,138px); aspect-ratio:3/4; padding:5px 5px 19px; border-radius:10px; border:1px solid rgba(255,224,240,.42); background:rgba(255,255,255,.10); box-shadow:0 8px 28px rgba(0,0,0,.24),0 0 18px rgba(255,105,179,.10); opacity:.48; pointer-events:auto; cursor:pointer; animation:globalPhotoDrift var(--duration,9s) ease-in-out infinite alternate; animation-delay:var(--delay,0s); will-change:transform; }
+    .global-floating-photo img { width:100%; height:100%; display:block; object-fit:cover; border-radius:6px; }
+    .global-floating-photo .photo-caption { position:absolute; left:5px; right:5px; bottom:3px; text-align:center; color:#fff0f7; font-size:.55rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .global-floating-photo.no-image img { opacity:0; }
+    .global-floating-photo .photo-fallback { display:none; position:absolute; inset:0 0 13px; place-items:center; font-size:1.8rem; }
+    .global-floating-photo.no-image .photo-fallback { display:grid; }
+    .global-floating-photo:hover,.global-floating-photo:focus-visible { opacity:.88; z-index:2; outline:1px solid #ffc2df; }
+    main, footer { position:relative; z-index:1; }
+    .topbar { position:absolute; z-index:5; }
+    .hero, .section, .surprise, .letter-box, .memory-card { background-color:transparent; }
+    @keyframes globalPhotoDrift { 0% { transform:translate3d(0,0,0) rotate(var(--tilt,0deg)); } 35% { transform:translate3d(12px,-15px,0) rotate(calc(var(--tilt,0deg) + 3deg)); } 70% { transform:translate3d(-9px,9px,0) rotate(calc(var(--tilt,0deg) - 2deg)); } 100% { transform:translate3d(7px,-5px,0) rotate(calc(var(--tilt,0deg) + 1deg)); } }
+    @media(max-width:700px) { .global-floating-photo { width:clamp(58px,17vw,92px); padding:4px 4px 15px; opacity:.35; } .global-floating-photo .photo-caption { font-size:.45rem; } }
+    @media(prefers-reduced-motion:reduce) { .global-floating-photo { animation:none!important; } }
+
     .letter-box {
       max-width:720px; margin:0 auto; padding:clamp(24px, 6vw, 54px); border:1px solid rgba(255,167,211,.23);
       border-radius:26px; background:linear-gradient(135deg,rgba(255,255,255,.075),rgba(139,83,155,.07));
@@ -173,13 +190,6 @@
       <button class="primary-btn" id="enterBtn">Mở cánh cổng của chúng ta <span>↗</span></button>
       <div class="tiny-note">Đeo tai nghe nhé — có một điều dành riêng cho bạn.</div>
     </section>
-
-    <section class="floating-section" id="floatingMemories">
-      <div class="section-head"><div class="eyebrow">A sky full of memories</div><h2>Kỷ niệm của chúng ta<br><em>đang bay giữa ngân hà.</em></h2><p class="section-sub">Chạm vào một bức ảnh để ngắm nhìn khoảnh khắc ấy thật gần.</p></div>
-      <div class="floating-stage" id="floatingStage" aria-label="Những bức ảnh kỷ niệm bay lơ lửng"></div>
-      <p class="gallery-hint">♡ Mỗi bức ảnh là một mảnh nhỏ trong thế giới của chúng ta ♡</p>
-    </section>
-
     <section class="section" id="memories">
       <div class="section-head">
         <div class="eyebrow">Chapter 01 · Little moments</div>
@@ -275,17 +285,40 @@
     if (CONFIG.musicFile) audio.src = CONFIG.musicFile;
 
 
-    const floatingStage = $("floatingStage");
-    const photoPositions = [[4,8,-8],[27,5,7],[53,10,-5],[76,7,8],[13,37,6],[39,34,-7],[66,38,5],[83,42,-8],[3,68,7],[28,70,-5],[55,67,8],[73,72,-6],[45,80,4],[17,18,5],[61,16,-7],[36,53,6],[88,14,-4],[7,49,-6],[48,8,7],[64,75,-5]];
+    const globalPhotoLayer = $("globalPhotoLayer");
+    // Phân bố ảnh trên toàn màn hình; mỗi lần tải trang sẽ có vị trí ngẫu nhiên khác nhau.
+    const occupied = [];
+    function randomPosition(index) {
+      const mobile = window.matchMedia("(max-width: 700px)").matches;
+      const width = mobile ? 17 : 11;
+      const height = mobile ? 25 : 34;
+      let x = 0, y = 0, attempts = 0;
+      do {
+        x = 2 + Math.random() * Math.max(5, 96 - width);
+        y = 3 + Math.random() * Math.max(5, 92 - height);
+        attempts++;
+      } while (attempts < 35 && occupied.some(p => Math.abs(p.x-x) < width*.72 && Math.abs(p.y-y) < height*.72));
+      occupied.push({x,y});
+      return {x,y};
+    }
     CONFIG.floatingImages.forEach((photo,index)=>{
-      const card=document.createElement("button");card.type="button";card.className="floating-photo";card.setAttribute("aria-label",`Xem ảnh: ${photo.caption||"Kỷ niệm"}`);
-      const pos=photoPositions[index%photoPositions.length],cycle=Math.floor(index/photoPositions.length);
-      card.style.left=((pos[0]+cycle*7)%84)+"%";card.style.top=((pos[1]+cycle*13)%78)+"%";card.style.setProperty("--tilt",pos[2]+"deg");card.style.setProperty("--duration",(6+(index%6)*.7)+"s");card.style.setProperty("--delay",(-index*.43)+"s");
-      const img=document.createElement("img");img.src=photo.src;img.alt=photo.caption||"Ảnh kỷ niệm";img.loading="lazy";img.onerror=()=>card.classList.add("no-image");
-      const fallback=document.createElement("span");fallback.className="photo-fallback";fallback.textContent=["♡","✦","🌷","☁️"][index%4];
-      const caption=document.createElement("span");caption.className="photo-caption";caption.textContent=photo.caption||`Kỷ niệm ${index+1}`;card.append(img,fallback,caption);
-      card.addEventListener("click",()=>{if(!img.complete||!img.naturalWidth){showToast("Thêm ảnh vào thư mục website để xem nhé ♡");return;}$("lightboxImage").src=photo.src;$("photoLightbox").classList.add("open");});floatingStage.appendChild(card);
+      const card=document.createElement("button");
+      card.type="button"; card.className="global-floating-photo";
+      card.setAttribute("aria-label",`Xem ảnh: ${photo.caption||"Kỷ niệm"}`);
+      const pos=randomPosition(index);
+      card.style.left=pos.x+"%"; card.style.top=pos.y+"%";
+      card.style.setProperty("--tilt",(Math.random()*18-9).toFixed(1)+"deg");
+      card.style.setProperty("--duration",(7+Math.random()*9).toFixed(1)+"s");
+      card.style.setProperty("--delay",(-Math.random()*12).toFixed(1)+"s");
+      const img=document.createElement("img"); img.src=photo.src; img.alt=photo.caption||"Ảnh kỷ niệm"; img.loading="lazy";
+      img.onerror=()=>card.classList.add("no-image");
+      const fallback=document.createElement("span"); fallback.className="photo-fallback"; fallback.textContent=["♡","✦","🌷","☁️"][index%4];
+      const caption=document.createElement("span"); caption.className="photo-caption"; caption.textContent=photo.caption||`Kỷ niệm ${index+1}`;
+      card.append(img,fallback,caption);
+      card.addEventListener("click",()=>{if(!img.complete||!img.naturalWidth){showToast("Kiểm tra tên ảnh trong CONFIG.floatingImages nhé ♡");return;}$("lightboxImage").src=photo.src;$("photoLightbox").classList.add("open");});
+      globalPhotoLayer.appendChild(card);
     });
+
     function closeLightbox(){$("photoLightbox").classList.remove("open");$("lightboxImage").src="";}
     $("closeLightbox").addEventListener("click",closeLightbox);$("photoLightbox").addEventListener("click",event=>{if(event.target===$("photoLightbox"))closeLightbox();});document.addEventListener("keydown",event=>{if(event.key==="Escape")closeLightbox();});
 
